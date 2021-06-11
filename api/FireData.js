@@ -122,4 +122,4 @@ async function FetchGuild(Guild) {
     return GuildData.data();
 }
 
-module.exports = { print, CreateUser, FetchData, UpdateData, UpdateGuild, CreateGuild, FetchGuild };
+module.exports = { CreateUser, FetchData, UpdateData, UpdateGuild, CreateGuild, FetchGuild };
