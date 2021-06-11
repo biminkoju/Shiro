@@ -2,11 +2,10 @@
 require('dotenv/config');
 
 const { Client, Collection, MessageEmbed, MessageAttachment, Intents, version } = require("discord.js");
-const { FetchGuild } = require('./api/FireData');
 const { print, GetDate, GetTime } = require('./api/functions');
+const { selfPerm } = require('./api/Permissions');
 const FireAdmin = require('firebase-admin');
 const { readdirSync } = require("fs");
-
 
 // Data
 const IsNightly = true;
@@ -25,7 +24,7 @@ if (IsNightly) {
 FireAdmin.initializeApp({credential:FireAdmin.credential.cert(bcnf.SA)});
 
 const DataBase = FireAdmin.firestore();
-
+const { FetchGuild } = require('./api/FireData');
 
 // Create Client
 const client = new Client({
@@ -135,7 +134,7 @@ client.on("message", async message => {
 
     if (READ_MESSAGE_HISTORY != true || EMBED_LINKS != true || ATTACH_FILES != true || USE_EXTERNAL_EMOJIS != true || ADD_REACTIONS != true || MANAGE_MESSAGES != true) return message.channel.send(Str);
 
-    if (WhitelistedCommands.includes(CommandArg[0]) ) return commandfile.run(client, message, args);
+    //if (WhitelistedCommands.includes(CommandArg[0]) ) return commandfile.run(client, message, args);
 
 
     if (message.author.id == '609097445825052701') {

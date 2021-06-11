@@ -9,7 +9,7 @@ module.exports = {
         .setDescription(`Pinging...`)
         .setColor('#ff8e2a');
 
-        message.noMentionReply(PingEmbed).then(msg => {
+        message.channel.send(PingEmbed).then(msg => {
             PingEmbed.setTitle(`Pong!`);
             PingEmbed.setDescription(`
                 Client \`${Math.round(Date.now() - message.createdTimestamp)}ms\`
