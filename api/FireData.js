@@ -1,4 +1,7 @@
+const FireAdmin = require('firebase-admin');
 const { print } = require('./functions');
+const DataBase = FireAdmin.firestore();
+
 
 /** @param FetchData Fetch data for a user @argument `user` */
 /**
