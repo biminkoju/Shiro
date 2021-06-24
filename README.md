@@ -1,8 +1,5 @@
 <div align="center">
 
-# Shiro, the Discord bot.
-
----
 <div align='center'>
 <a href="https://github.com/Senko-Softworks/Shiro/issues">
     <img src="https://img.shields.io/github/issues/Senko-Softworks/Shiro?color=0088ff">
