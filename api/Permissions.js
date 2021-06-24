@@ -1,3 +1,5 @@
+// Very helpful functions
+
 async function selfPerm(message, Permission) {
     if (message.guild.me.hasPermission(Permission)) return true;
 
