@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { MessageEmbed } = require('discord.js');
+
 module.exports = {
     Name: 'cat',
     cat: ['info'],
@@ -9,9 +10,9 @@ module.exports = {
                 const embed = new MessageEmbed()
                     .setColor('RANDOM')
                     .setImage(`${response.data[0].url}`);
-                message.channel.send(embed)
+                message.channel.send(embed);
             }).catch((err) => {
-                return message.channel.send(err)
-            })
+                return message.channel.send(err);
+            });
     }
-}
+};
