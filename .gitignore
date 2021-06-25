@@ -105,3 +105,4 @@ dist
 
 # secret
 Data/Accounts/
+.vscode/settings.json

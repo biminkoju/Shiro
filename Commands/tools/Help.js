@@ -1,8 +1,8 @@
 const { MessageEmbed } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const { readdirSync } = require('fs');
-const { FetchGuild, channelerror } = require('../../api/DataService');
-const { selfPerm, checkPerm } = require('../../api/PermissionManager');
+const { FetchGuild, channelerror } = require('../../api/FireData');
+const { selfPerm, checkPerm } = require('../../api/Permissions');
 
 module.exports = {
     Name: "help",

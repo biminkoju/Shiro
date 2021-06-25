@@ -7,7 +7,7 @@ const { readdirSync } = require("fs");
 
 
 // Data
-const IsNightly = true;
+const IsNightly = false;
 let bcnf = {bName:null,SA:null};
 
 
@@ -16,7 +16,7 @@ if (IsNightly) {
     bcnf.SA = require('./Data/Accounts/Nightly.json');
 } else {
     bcnf.bName = "Production";
-    bcnf.SA = null;
+    bcnf.SA = require('./Data/Accounts/Nightly.json');
 }
 
 //! I refuse to use MongoDB, no questions - Senko
@@ -45,7 +45,7 @@ client.on('ready', () => {
 
 
     readdirSync('./Commands/').forEach(Folder => {
-        const cmdFile = readdirSync(`./Commands/${Folder}/`).filter(file => file.endsWith('.js'));
+        const commands = readdirSync(`./Commands/${Folder}/`).filter(file => file.endsWith('.js'));
 
         for (let file of commands) {
             let pull = require(`./Commands/${Folder}/${file}`);
@@ -76,9 +76,9 @@ process.on("unhandledRejection", error => {
 
 
 client.on("message", async message => {
-    const GuildData = await FetchGuild(message.guild);
+    //const GuildData = await FetchGuild(message.guild);
 
-    var Prefix = GuildData.prefix || "?";
+    var Prefix = "s?";
     var args = message.content.slice(Prefix.length).trim().split(/ +/g);
     var CommandArg = message.content.toLowerCase().slice(Prefix.length).trim().split(/ +/g);
     var commandfile = client.Commands.get(CommandArg[0]) || client.Commands.get(client.Aliases.get(CommandArg[0]));

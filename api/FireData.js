@@ -92,7 +92,7 @@ async function FetchGuild(Guild) {
 
     let FreshData = await CreateGuild(Guild);
 
-    return FreshData.data();
+    return FreshData;
 }
 
 module.exports = { CreateUser, FetchData, UpdateData, UpdateGuild, CreateGuild, FetchGuild };
