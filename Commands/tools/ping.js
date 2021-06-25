@@ -9,14 +9,16 @@ module.exports = {
         .setDescription(`Pinging...`)
         .setColor('#ff8e2a');
 
-        message.channel.send(PingEmbed).then(msg => {
-            PingEmbed.setTitle(`Pong!`);
-            PingEmbed.setDescription(`
+        message.channel.send(PingEmbed).then(SentMessage => {
+            PingEmbed.setTitle(`Pong!`)
+            .setDescription(`
                 Client \`${Math.round(Date.now() - message.createdTimestamp)}ms\`
                 Server \`${Math.round(client.ws.ping)}ms\`
             `);
 
-            msg.edit(PingEmbed);
+            SentMessage.edit({
+                embed: PingEmbed
+            });
         });
     },
 };

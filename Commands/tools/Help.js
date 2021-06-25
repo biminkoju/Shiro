@@ -2,11 +2,11 @@ const { MessageEmbed } = require('discord.js');
 const Pagination = require('discord-paginationembed');
 const { readdirSync } = require('fs');
 const { FetchGuild, channelerror } = require('../../api/FireData');
-const { selfPerm } = require('../../api/Permissions');
+const { selfPerm, checkPerm } = require('../../api/Permissions');
 
 module.exports = {
     Name: "help",
-    description: "View a list of avaliable commands",
+    description: "View a list of available commands",
     Usage: "help [optional command]",
     cat: ['commands', 'cmds'],
 
@@ -33,12 +33,12 @@ module.exports = {
                             .setDescription(`
                                 ${pull.description || "No description Given."}
 
-                                Aliases: ${pull.aliases || 'None'}
-                                Categories: ${pull.cat.toString().replace(',', ', ') || "None"}
-                                Usage: ${prefix}${pull.Usage || pull.Name}
+                                > Aliases: ${pull.aliases || 'None'}
+                                > Categories: ${pull.cat.toString().replace(',', ', ') || "None"}
 
-                                > Hidden: \`${pull.hidden || "false"}\`
-                                > Disabled: \`${pull.disabled || "false"}\`
+                                Usage: ${prefix}${pull.Usage || pull.Name}
+                                Hidden: \`${pull.hidden || "false"}\`
+                                Disabled: \`${pull.disabled || "false"}\`
                             `)
                             .setColor("GREEN")
                         );
@@ -56,16 +56,16 @@ module.exports = {
 
             for (let file of Found) {
                 const pull = require(`../${dir}/${file}`);
-                if (pull.hidden == true) return;
-                if (pull.disabled == true) return;
 
-                CmdArray.push({ word: `> ${pull.Name}
-                    ${pull.description || "No description Given."}
+                if (!pull.disabled && !pull.hidden) {
+                    CmdArray.push({ word: `> ${pull.Name}
+                        ${pull.description || "No description Given."}
 
-                    Aliases: ${pull.aliases || 'None'}
-                    Categories: ${pull.cat.toString().replace(',', ', ') || "None"}
-                    Usage: ${prefix}${pull.Usage || pull.Name}
-                `});
+                        > Aliases: ${pull.aliases || 'None'}
+                        > Categories: ${pull.cat || "None"}
+                        Usage: ${prefix}${pull.Usage || pull.Name}
+                    `});
+                }
             }
         });
 

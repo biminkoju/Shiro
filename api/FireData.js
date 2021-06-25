@@ -3,126 +3,96 @@ const admin = require('firebase-admin');
 const DataBase = admin.firestore();
 
 
-/** @param FetchData Fetch data for a user @argument `user` */
 /**
- * @param CreateUser Fetch user data from a profile
- * @argument `user`
- * @example
- * const { FetchData } = require('../../api/DataService');
- *
- * let FetchedUser = message.mentions.users.first() || client.users.cache.get(args[1]) || message.author;
- * const UserStats = await FetchData(FetchedUser);
- *
- * @returns JSON User Data
+ * @param FetchData Fetch a user profile.
+ * @argument `user` - Must be the user, not an ID
+ * @returns UserData
 */
 async function FetchData(user) {
     let Fetched = user;
-    if (Fetched.user) Fetched = user.user;
 
-    const UD = DataBase.collection('Users').doc(Fetched.id);
-    let UserData = await UD.get();
+    const UserData = await DataBase.collection('Users').doc(Fetched.id).get();
 
-    if (!UserData.exists) CreateUser(Fetched);
+    if (!UserData.exists) await CreateUser(Fetched);
 
-    while (!UserData.exists) {
-        UserData = await UD.get();
-    }
-
-    const UserStats = UserData.data();
-    return UserStats;
+    return UserData.data();
 }
 
+/**
+ * @param CreateUser Fetch user data from a profile
+ * @argument `user` - Must be the user, not an ID
+ * @returns UserData
+*/
 async function CreateUser({ id, tag }) {
     DataBase.collection('Users').doc(id).set({
         LocalUser: {
             user: tag,
-            userID: id,
-            Banner: "DefaultBanner.png"
-        },
-
-        Stats: {
-            Fluffs: 0,
-            Pats: 0,
-            Steps: 0,
-            Hugs: 0,
-            Sleeps: 0,
-            Drinks: 0,
-            Smiles: 0
+            userID: id
         },
 
         Currency: {
             Yen: 0,
             Tofu: 0
-        },
-
-        RateLimits: {
-            Fluff_Rate: 0,
-            Pat_Rate: 0,
-            Step_Rate: 0,
-            Hug_Rate: 0,
-            Drink_Rate: 0,
-            Sleep_Rate: 0,
-            Smile_Rate: 0
-        },
-
-        Inventory: [],
-        Achievements: [],
-        Rewards: {
-            Daily: false,
-            Weekly: false
         }
     });
 }
 
-async function UpdateData(User, Data) {
+
+async function UpdateData(User, Data, type) {
     let Fetched = User;
-    if (Fetched.user) Fetched = user.user;
+
     await FetchData(Fetched);
-    await DataBase.collection('Users').doc(Fetched.id).set(Data, { merge: true });
+
+    if (type === 1) {
+        await DataBase.collection('Users').doc(Fetched.id).update(Data);
+    } else {
+        await DataBase.collection('Users').doc(Fetched.id).set(Data, { merge: true });
+    }
+
     return true;
 }
 
 
-async function UpdateGuild(Guild, NewData) {
+async function UpdateGuild(Guild, NewData, type) {
     await FetchGuild(Guild);
-    await DataBase.collection('Guilds').doc(Guild.id).set(NewData, { merge: true });
+
+    if (type === 1) {
+        await DataBase.collection('Guilds').doc(Guild.id).update(NewData);
+    } else {
+        await DataBase.collection('Guilds').doc(Guild.id).set(NewData, { merge: true });
+    }
+
     return true;
 }
 
 async function CreateGuild(GUILD_) {
-    print(`New guild`);
-
     DataBase.collection('Guilds').doc(GUILD_.id).set({
         OwnerID: GUILD_.ownerID,
         GID: GUILD_.id,
         Members: GUILD_.memberCount,
         prefix: '?'
-    }).then(
-        print(`Created Guild!`)
-    ).catch( e =>{
-        print(`[ GUILD ERROR ]: ${e}`);
+    }).catch(error => {
+        console.error(error);
+
+        return false;
     });
 
-    return;
+    return true;
 }
 
 /**
- * @param FetchGuild Guild (NOT ID)
+ * @param FetchGuild Guild - NOT ID
  */
 async function FetchGuild(Guild) {
     if (!Guild) return print(`No Guild Given!`);
 
-    const GD = DataBase.collection('Guilds').doc(Guild.id);
-    let GuildData = await GD.get();
+    const GuildData = DataBase.collection('Guilds').doc(Guild.id).get();
 
     if (GuildData.exists) return GuildData.data();
-    await CreateGuild(Guild);
 
-    while (!GuildData.exists) {
-        GuildData = await GD.get();
-    }
+    let FreshData = await CreateGuild(Guild);
 
-    return GuildData.data();
+    return FreshData;
 }
 
 module.exports = { CreateUser, FetchData, UpdateData, UpdateGuild, CreateGuild, FetchGuild };

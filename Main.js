@@ -1,14 +1,13 @@
-// Start Modules
 require('dotenv/config');
-
-const { Client, Collection, MessageEmbed, MessageAttachment, Intents, version } = require("discord.js");
+const { Client, Collection, Intents } = require("discord.js");
 const { print, GetDate, GetTime } = require('./api/functions');
 const { selfPerm } = require('./api/Permissions');
 const FireAdmin = require('firebase-admin');
 const { readdirSync } = require("fs");
 
+
 // Data
-const IsNightly = true;
+const IsNightly = false;
 let bcnf = {bName:null,SA:null};
 
 
@@ -17,11 +16,11 @@ if (IsNightly) {
     bcnf.SA = require('./Data/Accounts/Nightly.json');
 } else {
     bcnf.bName = "Production";
-    bcnf.SA = null;
+    bcnf.SA = require('./Data/Accounts/Nightly.json');
 }
 
 //! I refuse to use MongoDB, no questions - Senko
-FireAdmin.initializeApp({credential:FireAdmin.credential.cert(bcnf.SA)});
+FireAdmin.initializeApp({ credential:FireAdmin.credential.cert(bcnf.SA) });
 
 const DataBase = FireAdmin.firestore();
 const { FetchGuild } = require('./api/FireData');
@@ -35,10 +34,6 @@ const client = new Client({
 client.Commands = new Collection();
 client.Aliases = new Collection();
 
-process.client = client;
-
-
-// Functions
 
 client.on('ready', () => {
     readdirSync('./Events/').forEach(Event => {
@@ -47,6 +42,7 @@ client.on('ready', () => {
 
         pull.Start(client, DataBase);
     });
+
 
     readdirSync('./Commands/').forEach(Folder => {
         const commands = readdirSync(`./Commands/${Folder}/`).filter(file => file.endsWith('.js'));
@@ -69,47 +65,25 @@ client.on('ready', () => {
         Build: bcnf.bName,
         Members: client.users.cache.size,
         Guilds: client.guilds.cache.size,
-        Commands: client.Commands.size,
-        Versions: `DJS: ${version} | NJS: ${process.version}`
+        Commands: client.Commands.size
     });
 });
 
-//? this really doesn't do anything, why do I have it? dunno - senko
+
 process.on("unhandledRejection", error => {
-    console.trace(`[ ERROR ]: ${error}`);
+    console.log(error);
 });
 
 
 client.on("message", async message => {
-    const GuildData = await FetchGuild(message.guild);
-    var Prefix = await GuildData.prefix || "?";
+    //const GuildData = await FetchGuild(message.guild);
+
+    var Prefix = "s?";
     var args = message.content.slice(Prefix.length).trim().split(/ +/g);
     var CommandArg = message.content.toLowerCase().slice(Prefix.length).trim().split(/ +/g);
     var commandfile = client.Commands.get(CommandArg[0]) || client.Commands.get(client.Aliases.get(CommandArg[0]));
 
-    if (message.mentions.users.first() === client.user && !args[1]){
-        if (await selfPerm(message, 'EMBED_LINKS') != true) return;
-        if (await selfPerm(message, 'ATTACH_FILES') != true) return;
-
-        return message.reply(
-            new MessageEmbed()
-            .setTitle(`Hello ${message.author.username}`)
-            .setDescription(`
-                Your server prefix is "${Prefix}".
-                Use "${Prefix}help" to view all the available commands!
-
-                *If you can't use commands in a certain channel, use "${Prefix}channels" to view what channels your server admin has whitelisted.*
-
-                [Invite Me!](https://senkosworld.com.invite) | [Join the Community!](https://discord.com/invite/senko)
-            `)
-            .setColor("ORANGE")
-            .attachFiles(new MessageAttachment('images/senko/senko_hat_tip.png', 'info-san.png'))
-            .setThumbnail('attachment://info-san.png')
-        );
-    }
-
-    if (message.author.bot || !message.guild || message.system || !message.content.startsWith(Prefix)) return;
-
+    if (message.author.bot || !message.guild || message.system || !message.content.startsWith(Prefix) || !commandfile || commandfile.disabled) return;
 
     let { READ_MESSAGE_HISTORY, EMBED_LINKS, ATTACH_FILES, USE_EXTERNAL_EMOJIS, ADD_REACTIONS, MANAGE_MESSAGES } = {
         READ_MESSAGE_HISTORY: await selfPerm(message, 'READ_MESSAGE_HISTORY'),
@@ -119,8 +93,6 @@ client.on("message", async message => {
         ADD_REACTIONS: await selfPerm(message, 'ADD_REACTIONS'),
         MANAGE_MESSAGES: await selfPerm(message, 'MANAGE_MESSAGES')
     };
-
-
 
     // messy imo - Senko
     let Str = `It appears I do not have the correct permissions to perform my commands!\n\nPlease make sure I have the following:\n\n`;
@@ -134,25 +106,12 @@ client.on("message", async message => {
 
     if (READ_MESSAGE_HISTORY != true || EMBED_LINKS != true || ATTACH_FILES != true || USE_EXTERNAL_EMOJIS != true || ADD_REACTIONS != true || MANAGE_MESSAGES != true) return message.channel.send(Str);
 
-    //if (WhitelistedCommands.includes(CommandArg[0]) ) return commandfile.run(client, message, args);
-
-
-    if (message.author.id == '609097445825052701') {
-        if (!commandfile || commandfile.disabled && commandfile.disabled == true) return;
-        return commandfile.run(client, message, args);
-    }
-
-    if (GuildData.Channels && !GuildData.Channels.includes(message.channel.id)) return print("Blacklisted Channel (Set by Guild Admin)");
-    if (!commandfile || commandfile.disabled && commandfile.disabled == true) return;
-
     commandfile.run(client, message, args);
 });
 
-//? yes yes I know I don't need it in a function, but I have other uses for it - Senko
-function client_login() {
-    if (IsNightly) return client.login(process.env.NIGHTLY_TOKEN);
 
+if (IsNightly) {
+    return client.login(process.env.NIGHTLY_TOKEN);
+} else {
     client.login(process.env.TOKEN);
 }
-
-client_login();
