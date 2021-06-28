@@ -25,7 +25,7 @@ module.exports = {
             blocked_words: Data.blocked_words
         });
 
-        message.channel.send(`Word has been added to the block list!\n\n${new Date().toISOString()}`)
+        message.channel.send(`The word has been added to the block list!\n\n${new Date().toISOString()}`)
             .then(msg => {
                 msg.delete({ timeout: 5000 });
             }).catch();

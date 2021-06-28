@@ -1,5 +1,6 @@
+const { strike } = require('../api/Moderation');
 const { MessageEmbed } = require('discord.js');
-const { print } = require('../api/Functions');
+const { print } = require('../api/functions');
 const config = require('../Data/config');
 const admin = require('firebase-admin');
 //const leet = require('l33tsp34k');
@@ -25,17 +26,17 @@ function strip(Content) {
     return Content;
 }
 
+
 module.exports ={
     Start: async (client) => {
         let RawData = await DataBase.collection('config').doc('filter').get();
         let Data = RawData.data();
 
         async function filter(message) {
-            if (message.member.roles.cache.has(config.bypass)) return;
-
-            let Message = strip(message.content.toLowerCase().replaceAll(' ', ''));
-
             if (message.author.bot || !message.guild || message.system) return;
+
+            if (message.member.roles.cache.has(config.bypass)) return;
+            let Message = strip(message.content.toLowerCase().replaceAll(' ', ''));
             //let JoinedMessage = Message.replaceAll(' ', '');
 
             // Blocked Words
@@ -47,13 +48,15 @@ module.exports ={
 
                     message.delete();
 
+                    //let Striked = await strike(message.author);
+
                     message.channel.send(message.author, new MessageEmbed({
                         title: `Please don't do that!`,
-                        description: `We try to keep the server clean and it would be nice if you didn't send stuff like that. Thanks!`,
+                        description: `We try to keep the server clean and it would be nice if you didn't send stuff like that. Thanks!`,//\n\nYou now have ${Striked} strikes.`,
                         color: `RED`
-                    }));
+                    })).then(m=>{m.delete({timeout:5000});});
 
-                    client.channels.cache.get(config.logs).send({
+                    return client.channels.cache.get(config.logs).send({
                         embed: {
                             title: `Message Removed`,
 
@@ -113,7 +116,7 @@ module.exports ={
                         .setColor("RED")
                     ).catch();
 
-                    message.member.ban({ days: 1, reason: `Banned by: AutoMod\nReason: Forbidden Text` }).catch();
+                    return message.member.ban({ days: 1, reason: `Banned by: AutoMod\nReason: Forbidden Text` }).catch();
                 }
             }
         }

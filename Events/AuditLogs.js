@@ -17,7 +17,7 @@ module.exports = {
 
         client.on('messageDelete', async message  => {
             if (message.guild.id != CurrentGuild) return;
-            if (!message.guild || message.system) return;
+            if (!message.guild || message.author.bot ||message.system) return;
 
             message.guild.fetchAuditLogs({ type: 'MESSAGE_DELETE' }).then(async FetchedAudit => {
                 const logs = await FetchedAudit.entries.first();
@@ -47,7 +47,7 @@ module.exports = {
 
         client.on('messageUpdate', async (OldMessage, NewMessage)  => {
             if (OldMessage.guild.id != CurrentGuild) return;
-            if (!OldMessage.guild || OldMessage.system) return;
+            if (!OldMessage.guild || OldMessage.author.bot || OldMessage.system) return;
 
             OldMessage.guild.fetchAuditLogs({ type: 'MESSAGE_EDIT' }).then(async FetchedAudit => {
                 const logs = await FetchedAudit.entries.first();
