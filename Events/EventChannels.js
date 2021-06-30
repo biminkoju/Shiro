@@ -7,7 +7,7 @@ module.exports = {
                     let vowel  = ['a', 'e', 'i', 'o', 'u'];
 
                     for (var val of vowel) {
-                        if (message.content.match(val)) message.delete();
+                        if (message.content.toLowerCase.match(val)) message.delete();
                     }
                 break;
             }
