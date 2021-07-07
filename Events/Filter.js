@@ -123,6 +123,8 @@ module.exports ={
 
 
         client.on('message', async (message) => {
+            if(message.member.roles.cache.has(`777258405675925524`)) return message.delete();
+
             filter(message);
         });
 
