@@ -15,7 +15,7 @@ module.exports = {
     Start: async (client) => {
         let Channel = client.channels.cache.get(`777262625314701372`);
 
-        client.on('messageDelete', async message  => {
+        client.on('messageDelete', async (message)  => {
             if (message.guild.id != CurrentGuild) return;
             if (!message.guild || message.author.bot ||message.system) return;
 
