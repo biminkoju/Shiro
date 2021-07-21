@@ -139,7 +139,7 @@ module.exports = {
                             Banned by: AutoMod
                             Reason: Forbidden Text. You will not get an unban.
 
-                            If this is a false flag then please [join here and create a ticket](https://discord.gg/G6GyR2zA)
+                            If this is a false flag then please [join here and create a ticket](https://discord.gg/DWRSFJ3tbm)
                         `)
                         .setColor("RED")
                     ).catch();
