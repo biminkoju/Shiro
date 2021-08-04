@@ -52,14 +52,14 @@ module.exports = {
 
             if (message.member.roles.cache.has(config.bypass)) return;
 
-            let Index = message.content.toLowerCase();
+            //let Index = message.content.toLowerCase();
 
 
-            for (var i = 0; i < Index.length; i++) {
-                let char = Index.charAt(i);
+            // for (var i = 0; i < Index.length; i++) {
+            //     let char = Index.charAt(i);
 
-                if (!CharSet.includes(char)) message.delete();
-            }
+            //     if (!CharSet.includes(char)) message.delete();
+            // }
 
 
 
