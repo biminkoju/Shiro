@@ -16,3 +16,7 @@
 <a href="https://github.com/Senko-Softworks/Shiro/releases/latest">
     <img src="https://img.shields.io/github/v/release/Senko-Softworks/Shiro?label=Version">
 </a>
+
+# senko on deez nuts
+## dont ban me 
+### please
