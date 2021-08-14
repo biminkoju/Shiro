@@ -9,13 +9,13 @@ const DataBase = admin.firestore();
  * @returns UserData
 */
 async function FetchData(user) {
-    let Fetched = user;
+	let Fetched = user;
 
-    const UserData = await DataBase.collection('Users').doc(Fetched.id).get();
+	const UserData = await DataBase.collection('Users').doc(Fetched.id).get();
 
-    if (!UserData.exists) await CreateUser(Fetched);
+	if (!UserData.exists) await CreateUser(Fetched);
 
-    return UserData.data();
+	return UserData.data();
 }
 
 /**
@@ -24,75 +24,77 @@ async function FetchData(user) {
  * @returns UserData
 */
 async function CreateUser({ id, tag }) {
-    DataBase.collection('Users').doc(id).set({
-        LocalUser: {
-            user: tag,
-            userID: id
-        },
+	DataBase.collection('Users').doc(id).set({
+		LocalUser: {
+			user: tag,
+			userID: id,
+		},
 
-        Currency: {
-            Yen: 0,
-            Tofu: 0
-        }
-    });
+		Currency: {
+			Yen: 0,
+			Tofu: 0,
+		},
+	});
 }
 
 
 async function UpdateData(User, Data, type) {
-    let Fetched = User;
+	let Fetched = User;
 
-    await FetchData(Fetched);
+	await FetchData(Fetched);
 
-    if (type === 1) {
-        await DataBase.collection('Users').doc(Fetched.id).update(Data);
-    } else {
-        await DataBase.collection('Users').doc(Fetched.id).set(Data, { merge: true });
-    }
+	if (type === 1) {
+		await DataBase.collection('Users').doc(Fetched.id).update(Data);
+	}
+	else {
+		await DataBase.collection('Users').doc(Fetched.id).set(Data, { merge: true });
+	}
 
-    return true;
+	return true;
 }
 
 
 async function UpdateGuild(Guild, NewData, type) {
-    await FetchGuild(Guild);
+	await FetchGuild(Guild);
 
-    if (type === 1) {
-        await DataBase.collection('Guilds').doc(Guild.id).update(NewData);
-    } else {
-        await DataBase.collection('Guilds').doc(Guild.id).set(NewData, { merge: true });
-    }
+	if (type === 1) {
+		await DataBase.collection('Guilds').doc(Guild.id).update(NewData);
+	}
+	else {
+		await DataBase.collection('Guilds').doc(Guild.id).set(NewData, { merge: true });
+	}
 
-    return true;
+	return true;
 }
 
 async function CreateGuild(GUILD_) {
-    DataBase.collection('Guilds').doc(GUILD_.id).set({
-        OwnerID: GUILD_.ownerID,
-        GID: GUILD_.id,
-        Members: GUILD_.memberCount,
-        prefix: '?'
-    }).catch(error => {
-        console.error(error);
+	DataBase.collection('Guilds').doc(GUILD_.id).set({
+		OwnerID: GUILD_.ownerID,
+		GID: GUILD_.id,
+		Members: GUILD_.memberCount,
+		prefix: '?',
+	}).catch(error => {
+		console.error(error);
 
-        return false;
-    });
+		return false;
+	});
 
-    return true;
+	return true;
 }
 
 /**
  * @param FetchGuild Guild - NOT ID
  */
 async function FetchGuild(Guild) {
-    if (!Guild) return print(`No Guild Given!`);
+	if (!Guild) return print('No Guild Given!');
 
-    const GuildData = DataBase.collection('Guilds').doc(Guild.id).get();
+	const GuildData = DataBase.collection('Guilds').doc(Guild.id).get();
 
-    if (GuildData.exists) return GuildData.data();
+	if (GuildData.exists) return GuildData.data();
 
-    let FreshData = await CreateGuild(Guild);
+	let FreshData = await CreateGuild(Guild);
 
-    return FreshData;
+	return FreshData;
 }
 
 module.exports = { CreateUser, FetchData, UpdateData, UpdateGuild, CreateGuild, FetchGuild };
