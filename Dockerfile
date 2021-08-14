@@ -1,8 +1,8 @@
-FROM node:16
+# FROM node:16
 
-WORKDIR /usr/sr
-COPY package*.json ./
-RUN yarn install
-COPY . .
+# WORKDIR /usr/sr
+# COPY package*.json ./
+# RUN  install
+# COPY . .
 
-CMD [ "yarn", "start" ]
+# CMD [ "yarn", "start" ]
