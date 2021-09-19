@@ -17,6 +17,5 @@
     <img src="https://img.shields.io/github/v/release/Senko-Softworks/Shiro?label=Version">
 </a>
 
-# senko on deez nuts
-## dont ban me 
-### please
+# nothing to see here 
+    ## uwu
